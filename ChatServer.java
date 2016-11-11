@@ -23,10 +23,9 @@ import javax.swing.JTextArea;
  */
 
 public class ChatServer {
-		private BufferedReader in;
-		private PrintWriter out;
+		
 		private JFrame frame = new JFrame("SNAPServer");
-	    static JTextArea area = new JTextArea(8, 40);
+	   	static JTextArea area = new JTextArea(10, 30);
 		private JMenuBar MenuBar = new JMenuBar();
 		JMenu Menu = new JMenu ("Menu");
 		private Button ServiceButton= new Button("Touch Me for Service");
@@ -119,7 +118,7 @@ public class ChatServer {
                 // checking for the existence of a name and adding the name
                 // must be done while locking the set of names.
                 while (true) {
-                    out.println("SUBMITNAME");
+                    out.println("NAME");
                     name = in.readLine();
                     if (name == null) {
                         return;
@@ -137,7 +136,7 @@ public class ChatServer {
                 // Now that a successful name has been chosen, add the
                 // socket's print writer to the set of all writers so
                 // this client can receive broadcast messages.
-                out.println("NAMEACCEPTED");
+                out.println("ACCEPTED");
                 writers.add(out);
 
                 // Accept messages from this client and broadcast them.
