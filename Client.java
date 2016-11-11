@@ -117,9 +117,9 @@ public class Client {
         // Process all messages from server
         while (true) {
             String line = in.readLine();
-            if (line.startsWith("SUBMITNAME")) {
+            if (line.startsWith("NAME")) {
                 out.println(getName());
-            } else if (line.startsWith("NAMEACCEPTED")) {
+            } else if (line.startsWith("ACCEPTED")) {
                 textField.setEditable(true);
             } else if (line.startsWith("MESSAGE")) {
                 messageArea.append(line.substring(8) + "\n");
