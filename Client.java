@@ -1,5 +1,5 @@
-package multiplayer;
-
+//"When prompted  for the IP adress enter "localhost". this is for testing only
+// and enter a table name or ID
 import java.awt.Button;
 import java.awt.Container;
 import java.awt.Dimension;
