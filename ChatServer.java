@@ -1,4 +1,3 @@
-package multiplayer;
 
 import java.awt.Button;
 import java.awt.FlowLayout;
