@@ -1,0 +1,23 @@
+Name,ID,Type,isRefillable
+Honey Jalapeno Bacon Sriracha Burger,300,Sandwich,FALSE
+Bacon Avocado Cheeseburger,301,Sandwich,FALSE
+Slamburger,302,Sandwich,FALSE
+Double Cheeseburger,303,Sandwich,FALSE
+Chili Cheeseburger,304,Sandwich,FALSE
+Chicken Bacon Classic,305,Sandwich,FALSE
+Burbon Bacon Burger,306,Sandwich,FALSE
+Build your own Burger,307,Sandwich,FALSE
+Pot Roast Melt,308,Sandwich,FALSE
+Chicken Philly Melt,309,Sandwich,FALSE
+Prime Rib Philly Melt,310,Sandwich,FALSE
+The Super Bird,311,Sandwich,FALSE
+Club Sandwich,312,Sandwich,FALSE
+Cali Club Sandwich,313,Sandwich,FALSE
+Seasoned Fries,314,Sides,FALSE
+French Fries,315,Sides,FALSE
+Hash Browns,316,Sides,FALSE
+Onion Rings,317,Sides,FALSE
+Caesar Salad,318,Sides,FALSE
+Garden Salad,319,Sides,FALSE
+Dippable Veggies,320,Sides,FALSE
+Seasonal Fruit,321,Sides,FALSE

@@ -1,0 +1,26 @@
+Name,ID,Type,isRefillable
+Coffee (Bold),100,Drink,TRUE
+Coffee (Mild),101,Drink,TRUE
+Coffee (Decaf),102,Drink,TRUE
+Coffee (Iced),103,Drink,TRUE
+MM Premium Berry Blend,104,Drink,TRUE
+MM Orange Juice,105,Drink,TRUE
+Grapefruit Juice,106,Drink,TRUE
+Apple Juice,107,Drink,TRUE
+Tomato Juice,108,Drink,TRUE
+2% Milk,109,Drink,TRUE
+Chocolate Milk,110,Drink,TRUE
+Coca Cola,111,Drink,TRUE
+Diet Coca Cola,112,Drink,TRUE
+Sprite,113,Drink,TRUE
+Dr. Pepper,114,Drink,TRUE
+Root Beer,115,Drink,TRUE
+Fanta,116,Drink,TRUE
+Hi-C,117,Drink,TRUE
+Hot Chocolate,118,Drink,TRUE
+Hot Tea/Herbal Tea,119,Drink,TRUE
+Chocolate Milkshake,120,Drink,TRUE
+Vanilla Milkshake,121,Drink,TRUE
+Strawberry Milkshake,122,Drink,TRUE
+Oreo Milkshake,123,Drink,TRUE
+Chocolate Peanut Butter Milkshake,124,Drink,TRUE

@@ -1,0 +1,24 @@
+Name,ID,Type,isRefillable
+Burbon Chicken Skillet,400,Entre,FALSE
+Steak Skewer Killet,401,Entre,FALSE
+Wild Alaska Salmon Skillet,402,Entre,FALSE
+Slow Cooked Pot Roast,403,Entre,FALSE
+Chicken Strips,404,Entre,FALSE
+Brookly Spaghetti & Meatballs,405,Entre,FALSE
+Fish & Chips,406,Entre,FALSE
+Tilapia Ranchero,407,Entre,FALSE
+T-Bone Steak & Shrimp,408,Entre,FALSE
+T-Bone Steak,409,Entre,FALSE
+Sirloin Steak,410,Entre,FALSE
+Country-Fried Steak,411,Entre,FALSE
+Broccoli,412,DinnerSide,FALSE
+Dippable Veggies,413,DinnerSide,FALSE
+Fresh Sauteed Zucchini & Squash,414,DinnerSide,FALSE
+Sweet Petite Corn,415,DinnerSide,FALSE
+Fresh Steamed Zucchini & Squash,416,DinnerSide,FALSE
+Cheddar Mashed Potatoes,417,DinnerSide,FALSE
+French Fries,418,DinnerSide,FALSE
+Hash Browns,419,DinnerSide,FALSE
+Mashed Potatoes,420,DinnerSide,FALSE
+Red-Skinned Potatoes,421,DinnerSide,FALSE
+Whole Grain Rice,422,DinnerSide,FALSE

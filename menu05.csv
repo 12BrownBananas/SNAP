@@ -1,0 +1,16 @@
+Name,ID,Type,isRefillable
+Ketchup,1,Condiment,TRUE
+Mustard ,2,Condiment,TRUE
+Mayonaise,3,Condiment,TRUE
+Ranch Dressing,4,Condiment,TRUE
+Honey Mustard,5,Condiment,TRUE
+Barbeque Sauce,6,Condiment,TRUE
+Bleu Cheese,7,Condiment,TRUE
+Hot Sauce,8,Condiment,TRUE
+Sour Cream,9,Condiment,TRUE
+Horseradish,10,Condiment,TRUE
+Lemon Slice,11,Condiment,TRUE
+Lime Slice,12,Condiment,TRUE
+Orange Slice,13,Condiment,TRUE
+Salt,14,Condiment,TRUE
+Pepper,15,Condiment,TRUE

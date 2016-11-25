@@ -1,0 +1,22 @@
+Name,ID,Type,isRefillable
+Hearty Chili (Bowl),200,Appetizer,FALSE
+Hearty Chili (Cup),201,Appetizer,FALSE
+Vegetable Beef (Bowl),202,Appetizer,FALSE
+Vegetable Beef (Cup),203,Appetizer,FALSE
+Loaded Baked Potato (Bowl),204,Appetizer,FALSE
+Loaded Baked Potato (Cup),205,Appetizer,FALSE
+Clam Chowder (Bowl,206,Appetizer,FALSE
+Clam Chowder (Cup),207,Appetizer,FALSE
+Broccoli & Chedder (Bowl),208,Appetizer,FALSE
+Broccoli & Chedder (Cup),209,Appetizer,FALSE
+Chicken Noodle (Bowl),210,Appetizer,FALSE
+Chicken Noodle (Cup),211,Appetizer,FALSE
+Chef's Salad,212,Appetizer,FALSE
+Garden Salad,213,Appetizer,FALSE
+Caesar Salad,214,Appetizer,FALSE
+Loaded Bacon Cheddar Tots,215,Appetizer,FALSE
+Chicken Bites,216,Appetizer,FALSE
+Chicken Quesadilla,217,Appetizer,FALSE
+Mozarella Cheese Sticks,218,Appetizer,FALSE
+Buffalo Wings,219,Appetizer,FALSE
+Zesty Nachos,220,Appetizer,FALSE
