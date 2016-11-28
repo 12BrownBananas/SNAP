@@ -1,11 +1,16 @@
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.ImageObserver;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
-import javax.swing.*;
 
-public class LayoutView extends JPanel implements ImageObserver {
+import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+
+public class ClientView extends JPanel implements ImageObserver {
 	int height;
 	int width;
 	boolean running;
@@ -13,18 +18,18 @@ public class LayoutView extends JPanel implements ImageObserver {
 	JFrame frame = new JFrame();
 	private JLayeredPane lpane = new JLayeredPane();
 	Color alpha;
-	LayoutModel myModel;
-	public LayoutView(LayoutModel model) throws IOException, InterruptedException {
+	ClientController myController;
+	public ClientView(ClientController myController) throws IOException, InterruptedException {
 		alpha = new Color(1f, 0f, 0f, 0f);
-		height = 810;
-		width = 1440;
+		height = 720;
+		width = 960;
 		running = true;
-		myModel = model;
+		myController = myController;
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add(lpane, BorderLayout.CENTER);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(myModel);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(myController);
 		frame.pack();
 		frame.setVisible(true);
 	}

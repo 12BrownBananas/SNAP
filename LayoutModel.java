@@ -1,5 +1,8 @@
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -13,18 +16,32 @@ public class LayoutModel extends JPanel implements MouseListener, MouseMotionLis
 	boolean isPressingButton;
 	TableNode nodeGrabbed;
 	ArrayList<TableNode> nodes = new ArrayList<TableNode>();
+	ArrayList<String> openIds = new ArrayList<String>();
 	int currentId;
 	boolean isSelecting;
 	boolean canMakeNode;
+	boolean canStillAddToNodes;
+	NetworkServer network;
 	public LayoutModel() throws IOException, InterruptedException {
+		//network = ntwk;
 		view = new LayoutView(this);
 		isHoldingNode = false;
 		currentId = 0;
 		isSelecting = false;
 		isPressingButton = false;
 		canMakeNode = true;
+		canStillAddToNodes = false;
 		view.frame.addMouseListener(this);
 		view.frame.addMouseMotionListener(this);
+	}
+	
+	private boolean isNodeInServer(String id) {
+		String node = null;
+		//node = network.findNode(id);
+		if (node != null) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -33,6 +50,7 @@ public class LayoutModel extends JPanel implements MouseListener, MouseMotionLis
 			for (int i = 0; i < nodes.size(); i++) {
 				if (nodes.get(i).isSelected) {
 					if (isOverTrash(e.getX(), e.getY(), nodes.get(i))) {
+						openIds.add(nodes.get(i).nodeID);
 						nodes.remove(i);
 						repaint();
 						canMakeNode = true;
@@ -69,13 +87,32 @@ public class LayoutModel extends JPanel implements MouseListener, MouseMotionLis
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			if (isOverNode(e.getX(), e.getY()) && !isOverDialogBox(e.getX(), e.getY())) {
 				//The mouse is hovering over a node at this point
-				isHoldingNode = true;
-				nodeGrabbed = nodeOver(e.getX(), e.getY());
+				if (!nodeOver(e.getX(), e.getY()).synched) {
+					isHoldingNode = true;
+					nodeGrabbed = nodeOver(e.getX(), e.getY());
+					nodeGrabbed.x = e.getX()-nodeGrabbed.nodeIcon.getWidth()/2+nodeGrabbed.xOffset;
+					nodeGrabbed.y = e.getY()-nodeGrabbed.nodeIcon.getWidth()/2+nodeGrabbed.yOffset;
+					try {
+						nodeGrabbed.nodeIcon = ImageIO.read(new File("node0_2.png"));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					repaint();
+				}
 			}
 			for (int i = 0; i < nodes.size(); i++) {
 				if (nodes.get(i).isSelected) {
 					if (isOverButton(e.getX(), e.getY(), nodes.get(i))) {
 						isPressingButton = true;
+						if (nodes.get(i).synched) {
+							try {
+								nodes.get(i).orderButton = ImageIO.read(new File ("orderButton2.png"));
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
 						repaint();
 					}
 				}
@@ -85,41 +122,69 @@ public class LayoutModel extends JPanel implements MouseListener, MouseMotionLis
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (SwingUtilities.isRightMouseButton(e)) {
-			if (isOverNode(e.getX(), e.getY())) {
-				nodeOver(e.getX(), e.getY()).isSelected = true;
-				canMakeNode = false;
-				repaint();
+			boolean canSelect = true;
+			for (int i = 0; i < nodes.size(); i++) {
+				if (nodes.get(i).isSelected) {
+					canSelect = false;
+				}
+			}
+			if (canSelect) {
+				if (isOverNode(e.getX(), e.getY())) {
+					nodeOver(e.getX(), e.getY()).isSelected = true;
+					canMakeNode = false;
+					repaint();
+				}
 			}
 			isSelecting = false;
 		}
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			if (isPressingButton) {
+				for (int i = 0; i < nodes.size(); i++) {
+					if (nodes.get(i).isSelected) {
+						if (nodes.get(i).synched) {
+							try {
+								nodes.get(i).orderButton = ImageIO.read(new File ("orderButton.png"));
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
+				}
 				isPressingButton = false;
 				repaint();
 			}
 			if (!isHoldingNode && !isOverDialogBox(e.getX(), e.getY())) {
 				if (!isOverNode(e.getX(), e.getY()) && canMakeNode) {
 					String idString = "";
-					if (currentId < 10) {
-						idString = "000"+Integer.toString(currentId);
-					}
-					else if (currentId < 100) {
-						idString = "00"+Integer.toString(currentId);
-					}
-					else if (currentId < 1000) {
-						idString = "0"+Integer.toString(currentId);
-					}
-					else if (currentId < 10000) {
-						idString = Integer.toString(currentId);
+					if (openIds.size() <= 0) {
+						if (currentId < 10) {
+							idString = "000"+Integer.toString(currentId);
+						}
+						else if (currentId < 100) {
+							idString = "00"+Integer.toString(currentId);
+						}
+						else if (currentId < 1000) {
+							idString = "0"+Integer.toString(currentId);
+						}
+						else if (currentId < 10000) {
+							idString = Integer.toString(currentId);
+						}
+						else {
+							System.out.println("Error: ID space exhausted.");
+						}
+						currentId++;
 					}
 					else {
-						System.out.println("Error: ID space exhausted.");
+						idString = openIds.get(openIds.size()-1);
+						openIds.remove(openIds.size()-1);
+						canStillAddToNodes = true;
 					}
-					if (currentId <= 9999) {
-						currentId++;
+					if (currentId <= 9999 || canStillAddToNodes) {
 						nodes.add(new TableNode(idString, e.getX(), e.getY(), view));
 						nodes.get(nodes.size()-1).x = nodes.get(nodes.size()-1).x-nodes.get(nodes.size()-1).nodeIcon.getWidth()/2+nodes.get(nodes.size()-1).xOffset;
 						nodes.get(nodes.size()-1).y = nodes.get(nodes.size()-1).y-nodes.get(nodes.size()-1).nodeIcon.getHeight()/2+nodes.get(nodes.size()-1).yOffset;
+						canStillAddToNodes = false;
 						repaint();
 					}
 				}
@@ -127,6 +192,12 @@ public class LayoutModel extends JPanel implements MouseListener, MouseMotionLis
 			}
 			else if (!isOverDialogBox(e.getX(), e.getY())){
 				if (nodeGrabbed != null) {
+					try {
+						nodeGrabbed.nodeIcon = ImageIO.read(new File("node0_1.png"));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					if (!collisionWithNode(nodeGrabbed.x, nodeGrabbed.y, nodeGrabbed.x+nodeGrabbed.nodeIcon.getWidth(), nodeGrabbed.y+nodeGrabbed.nodeIcon.getHeight(), nodeGrabbed)) {
 						isHoldingNode = false;
 						nodeGrabbed.x = e.getX()-nodeGrabbed.nodeIcon.getWidth()/2+nodeGrabbed.xOffset;
@@ -149,11 +220,13 @@ public class LayoutModel extends JPanel implements MouseListener, MouseMotionLis
 	}
 	
 	public boolean isOverTrash(int x, int y, TableNode node) {
-		if (x > node.x+node.trashX && x < node.x+node.trashX+node.trashCan.getWidth()) {
-			if (y > node.y+node.trashY+node.selectYOffset && y < node.y+node.trashY+node.trashCan.getHeight()+node.selectYOffset) {
-				return true;
-			}
- 		}
+		if (node.synched == false) {
+			if (x > node.x+node.trashX && x < node.x+node.trashX+node.trashCan.getWidth()) {
+				if (y > node.y+node.trashY+node.selectYOffset && y < node.y+node.trashY+node.trashCan.getHeight()+node.selectYOffset) {
+					return true;
+				}
+	 		}
+		}
 		return false;
 	}
 	
@@ -231,13 +304,19 @@ public class LayoutModel extends JPanel implements MouseListener, MouseMotionLis
 		for (int i = 0; i < nodes.size(); i++) {
 			if (nodes.get(i).isSelected) {
 				g.drawImage(nodes.get(i).dialogBox, nodes.get(i).x+nodes.get(i).dialogBoxX, nodes.get(i).y+nodes.get(i).dialogBoxY, null);
-				g.drawImage(nodes.get(i).trashCan, nodes.get(i).x+nodes.get(i).trashX, nodes.get(i).y+nodes.get(i).trashY, null);
-				g.drawString("Delete Node", nodes.get(i).x+nodes.get(i).trashX-10, nodes.get(i).y+nodes.get(i).trashY+nodes.get(i).trashCan.getHeight()+nodes.get(i).selectYOffset/2);
-				if (!isPressingButton) {
-					g.drawImage(nodes.get(i).button, nodes.get(i).x+nodes.get(i).buttonX, nodes.get(i).y+nodes.get(i).buttonY, null);
+				g.drawString("#"+nodes.get(i).nodeID, nodes.get(i).x+nodes.get(i).dialogBoxX-nodes.get(i).xOffset*10, nodes.get(i).y+nodes.get(i).dialogBoxY-nodes.get(i).yOffset-2);
+				if (!nodes.get(i).synched) {
+					g.drawImage(nodes.get(i).trashCan, nodes.get(i).x+nodes.get(i).trashX, nodes.get(i).y+nodes.get(i).trashY, null);
+					g.drawString("Delete Node", nodes.get(i).x+nodes.get(i).trashX-10, nodes.get(i).y+nodes.get(i).trashY+nodes.get(i).trashCan.getHeight()+nodes.get(i).selectYOffset/2);
+					if (!isPressingButton) {
+						g.drawImage(nodes.get(i).button, nodes.get(i).x+nodes.get(i).buttonX, nodes.get(i).y+nodes.get(i).buttonY, null);
+					}
+					else {
+						g.drawImage(nodes.get(i).button2, nodes.get(i).x+nodes.get(i).buttonX, nodes.get(i).y+nodes.get(i).buttonY, null);
+					}
 				}
 				else {
-					g.drawImage(nodes.get(i).button2, nodes.get(i).x+nodes.get(i).buttonX, nodes.get(i).y+nodes.get(i).buttonY, null);
+					g.drawImage(nodes.get(i).orderButton, nodes.get(i).x+nodes.get(i).buttonX, nodes.get(i).y+nodes.get(i).buttonY, null);
 				}
 			}
 		}
@@ -254,6 +333,14 @@ public class LayoutModel extends JPanel implements MouseListener, MouseMotionLis
 			for (int i = 0; i < nodes.size(); i++) {
 				if (nodes.get(i).isSelected) {
 					if (!isOverButton(arg0.getX(), arg0.getY(), nodes.get(i))) {
+						if (nodes.get(i).synched) {
+							try {
+								nodes.get(i).orderButton = ImageIO.read(new File ("orderButton.png"));
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
 						isPressingButton = false;
 						repaint();
 					}
