@@ -1,3 +1,4 @@
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,15 +12,22 @@ public class menuItem{
 	boolean isRefillable;
 	String SRefillable;
 	String type;
-	boolean isSelected = false;
 	BufferedImage button;
+	BufferedImage buttonP;
+	
+	BufferedImage currentButton;
+	
 	int x, y;
 	int stringOffsetX, stringOffsetY;
+	
+	Rectangle rect;
 	
 	public menuItem(String name, int id, String type, String SRefillable) throws IOException{
 		this.name = name;
 		this.id = id;
 		this.button = ImageIO.read(new File("itemBox.png"));
+		this.buttonP = ImageIO.read(new File("itemBoxPressed.png"));
+		this.currentButton = ImageIO.read(new File("itemBox.png"));
 		
 		if(SRefillable == "TRUE"){
 			this.isRefillable = true;
@@ -29,20 +37,30 @@ public class menuItem{
 		}
 		stringOffsetX = button.getWidth()/4;
 		stringOffsetY = button.getHeight()/2;
-		
-		
-	}
-	public menuItem(String name, boolean isSelected, BufferedImage button){
-		
 	}
 	
-	public void updateButton() throws IOException{
-		if(this.button == ImageIO.read(new File("itemBox.png"))){
-			this.button = ImageIO.read(new File("itemBoxPressed.png"));
-		}
-		if(this.button == ImageIO.read(new File("itemBoxPressed.png"))){
-			this.button = ImageIO.read(new File("itemBox.png"));
-		}
+	public void setX(int x){
+		this.x = x;
+	}
+	
+	public void setY(int y){
+		this.y = y;
+	}
+	
+	public void setRect(Rectangle rect){
+		this.rect = rect;
+	}
+	
+	public String getName(Rectangle rect){
+		return this.name;
+	}
+	
+	public void reset(){
+		this.currentButton = this.button;
+	}
+	
+	public void pressed(){
+		this.currentButton = this.buttonP;
 	}
 
 }
