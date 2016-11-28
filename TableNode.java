@@ -12,6 +12,7 @@ public class TableNode  {
 	Order myOrder;
 	String nodeID;
 	int tableStatus;
+	String[] statusNames;
 	boolean isClientSide;
 	int x;
 	int y;
@@ -41,6 +42,14 @@ public class TableNode  {
 	TableNode(String uniqueID, ClientController myController) {
 		ctrl = myController;
 		isClientSide = true;
+		tableStatus = 0;
+		statusNames = new String[6];
+		statusNames[0] = "Idle";
+		statusNames[1] = "Ready to Order";
+		statusNames[2] = "Order Placed";
+		statusNames[3] = "Order Preparing";
+		statusNames[4] = "Order Delivered";
+		statusNames[5] = "Ready to Pay";
 	}
 	TableNode(String uniqueID, int xPos, int yPos, LayoutView myView) {
 		view = myView;
@@ -82,14 +91,16 @@ public class TableNode  {
 		myOrder = null;
 	}
 	public void advanceStatus() {
-		if (tableStatus < 6) {
+		if (tableStatus < 5) {
 			tableStatus++;
 		}
 		else {
 			tableStatus = 0;
 		}
-		updateNodeImage();
-		view.myModel.repaint();
+		if (!isClientSide) {
+			updateNodeImage();
+			view.myController.repaint();
+		}
 	}
 	private void updateNodeImage() {
 		File imgFile = null;
@@ -126,13 +137,13 @@ public class TableNode  {
 			tableStatus--;
 		}
 		updateNodeImage();
-		view.myModel.repaint();
+		view.myController.repaint();
 	}
 	public void resetStatus() {
 		tableStatus = 0;
 		myOrder = null;
 		updateNodeImage();
-		view.myModel.repaint();
+		view.myController.repaint();
 	}
 	public int getStatus() {
 		return tableStatus;

@@ -13,18 +13,18 @@ public class LayoutView extends JPanel implements ImageObserver {
 	JFrame frame = new JFrame();
 	private JLayeredPane lpane = new JLayeredPane();
 	Color alpha;
-	LayoutModel myModel;
-	public LayoutView(LayoutModel model) throws IOException, InterruptedException {
+	LayoutController myController;
+	public LayoutView(LayoutController controller) throws IOException, InterruptedException {
 		alpha = new Color(1f, 0f, 0f, 0f);
 		height = 810;
 		width = 1440;
 		running = true;
-		myModel = model;
+		myController = controller;
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add(lpane, BorderLayout.CENTER);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(myModel);
+		frame.setContentPane(myController);
 		frame.pack();
 		frame.setVisible(true);
 	}

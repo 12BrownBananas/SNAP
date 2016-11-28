@@ -29,7 +29,7 @@ public class NetworkServer {
 	private JMenuBar MenuBar = new JMenuBar();
 	JMenu Menu = new JMenu ("Menu");
 	JMenuItem exit = new JMenuItem("Exit");
-
+	//I want a local variable that I can use to store nodes inside of, e.g. TableNode tempNode = new TableNode(...)
    
     private static final int PORT = 9003;
 

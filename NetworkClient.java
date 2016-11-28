@@ -76,9 +76,10 @@ public class NetworkClient {
             if (line.startsWith("NAME")) {
                 String id = getName();
                 frame.dispose();
-                ClientController ctrl = new ClientController(id, this);
+                ClientView view = new ClientView();
+                ClientController ctrl = new ClientController(id, this, view);
                 myController = ctrl;
-                //out.write(myController.myNode.nodeID);
+                //I want to be able to send myController.myNode to the server at any time
                 ctrl.repaint();
             } else if (line.startsWith("ACCEPTED")) {
                 textField.setEditable(true);
