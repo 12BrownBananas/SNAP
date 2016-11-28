@@ -8,7 +8,7 @@ public class orderMenu {
 	
 	public ArrayList<menuItem> menu;
 
-	public orderMenu() throws FileNotFoundException{
+	public orderMenu() throws NumberFormatException, IOException{
 		
 		this.menu = new ArrayList<>();
 		
