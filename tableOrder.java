@@ -10,6 +10,8 @@ public class tableOrder {
 	public tableOrder(int id){
 		this.id = id;
 		this.tableOrder = new ArrayList<>();
+		this.x = 30;
+		this.y = 30;
 		
 	}
 	

@@ -11,6 +11,7 @@ public class menuItem{
 	int id;
 	boolean isRefillable;
 	String SRefillable;
+	boolean isSelected;
 	String type;
 	BufferedImage button;
 	BufferedImage buttonP;
@@ -38,6 +39,13 @@ public class menuItem{
 		stringOffsetX = button.getWidth()/4;
 		stringOffsetY = button.getHeight()/2;
 	}
+	public menuItem(menuItem m){
+		this.name = m.name;
+		this.id = m.id;
+		this.button = m.button;
+		this.buttonP = m.buttonP;
+		this.currentButton = m.button;
+	}
 	
 	public void setX(int x){
 		this.x = x;
@@ -61,6 +69,10 @@ public class menuItem{
 	
 	public void pressed(){
 		this.currentButton = this.buttonP;
+	}
+	
+	public void setSel(){
+		this.isSelected = true;
 	}
 
 }

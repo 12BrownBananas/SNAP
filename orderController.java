@@ -9,6 +9,7 @@ import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -23,7 +24,11 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 	ArrayList<menuItem> currentList = new ArrayList<>();
 	orderMenu menuArray;
 	tableOrder test;
+	int yoT = 50;
+	int xoT = 30;
 	
+	int xOffset = 0;
+	int yOffset = 0;
 	
 	public orderController()throws NumberFormatException, IOException{
 		
@@ -113,7 +118,7 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 				}
 			}
 		}
-		else{
+	if(x<1250 && x > orderViewer.width/2 && y<655){
 			for(menuItem item: menuArray.currentList){
 				if(item.rect.contains(x, y)){
 					if(item.currentButton == item.buttonP){
@@ -129,6 +134,16 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 					}
 			}
 		}
+	else{
+		for(menuItem orderItem: test.tableOrder){
+			if(orderItem.rect.contains(x, y)){
+				System.out.println(orderItem.name);
+				orderItem.pressed();
+				repaint();
+			}
+			
+		}
+	}
 	}
 
 	@Override
@@ -136,7 +151,6 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 		int x = e.getX()-10;
 		int y = e.getY()-40;
 		
-
 		
 		if(x>1250 || y > 655){
 			for(functionKey key: functionList){
@@ -145,10 +159,51 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 						
 						if(key.name == "addButton.png"){
 							for(menuItem orderItem: orderListTemp){
-								test.tableOrder.add(orderItem);
+								menuItem addItem = new menuItem(orderItem);
+								test.tableOrder.add(addItem);
+								addItem.setX(xoT + xOffset);
+								addItem.setY(yoT + yOffset);
+								addItem.setRect(new Rectangle(addItem.x, addItem.y, 300, 40));
+								if(yOffset<orderViewer.height-150){
+									yOffset +=50;
+								}
+								else{
+									yOffset = 0;
+									xOffset = 330;
+								}
+								System.out.println(test.tableOrder.size());
 							}
 						orderListTemp.clear();
 						}
+						
+						if(key.name == "deleteButton.png"){
+							
+							Iterator<menuItem> iter = test.tableOrder.iterator();
+							while(iter.hasNext()){
+								menuItem item = iter.next();
+								if(item.currentButton == item.buttonP){
+									iter.remove();
+									xoT = 30;
+									yoT = 50;
+									xOffset = 0;
+									yOffset = 0;
+								for(menuItem itemDelete: test.tableOrder){
+										
+									itemDelete.setX(xoT + xOffset);
+									itemDelete.setY(yoT + yOffset);
+									itemDelete.setRect(new Rectangle(itemDelete.x, itemDelete.y, 300, 40));
+									if(yOffset<orderViewer.height-150){
+										yOffset +=50;
+									}
+									else{
+										yOffset = 0;
+										xOffset = 330;
+									}
+								}
+								}
+							}
+						}
+						repaint();
 						if(key.name == "revertButton.png"){
 							if(test.tableOrder.size()>0 && orderListTemp.isEmpty()){
 							test.tableOrder.remove(test.tableOrder.size()-1);
@@ -223,25 +278,13 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 			g.drawImage(key.currentButton, key.x, key.y, key.currentButton.getHeight()/3, key.currentButton.getHeight()/3, null);
 		}
 		
-		int offsetOrder = 0;
-		int offsetOrderX = 0;
-		
-		int toX = 30 + offsetOrderX;
-		int toY = 50 + offsetOrder;
+
 		
 		for(menuItem orderItem: test.tableOrder){
 			g.setColor(Color.black);
 			g.setFont(myFont2);
-			
-			if(offsetOrder<orderViewer.height-150){
-			g.drawImage(orderItem.button, 30 + offsetOrderX, 50 + offsetOrder, 300, 40, null);
-			g.drawString(orderItem.name, 50 + offsetOrderX, 75 + offsetOrder);
-			offsetOrder += 50;
-			}
-			else{
-				offsetOrder = 0;
-				offsetOrderX = 330;	
-			}
+			g.drawImage(orderItem.currentButton, orderItem.x, orderItem.y, orderItem.rect.width, orderItem.rect.height, null);
+			g.drawString(orderItem.name, orderItem.x + 10, orderItem.y + 25);
 		}
 	}
 }
