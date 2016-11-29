@@ -1,5 +1,3 @@
-//"When prompted  for the IP adress enter "localhost". this is for testing only
-// and enter a table name or ID
 import java.awt.Button;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,12 +17,14 @@ public class NetworkClient {
 
     BufferedReader in;
     PrintWriter out;
+    TableNode NewNode;
     JFrame frame = new JFrame("SNAPClient");
     JTextField textField = new JTextField(40);
     JTextArea messageArea = new JTextArea(8, 40);
 	Button ServiceButton= new Button("Touch Me for Service");
 	ClientController myController;
 	ArrayList <Integer> TempNodes = new ArrayList<Integer>();
+	ArrayList<TableNode> newNodeId= new ArrayList<TableNode>();
 	private ObjectOutputStream outPut;
 	private ObjectInputStream inPut;
 	
@@ -47,6 +47,8 @@ public class NetworkClient {
      * @throws InterruptedException 
      */
     private void run() throws IOException, InterruptedException {
+    	//TempNodes.add(myController.myNode.tableStatus);
+    	newNodeId.add(ClientController.myNode);
 
         // Make connection and initialize streams
         String serverAddress = "localhost";
@@ -57,26 +59,33 @@ public class NetworkClient {
         out = new PrintWriter(socket.getOutputStream(), true);
         // Process all messages from server
         
-        outPut = new ObjectOutputStream(socket.getOutputStream());
-        inPut = new ObjectInputStream(socket.getInputStream());
+       outPut = new ObjectOutputStream(socket.getOutputStream());
+       // inPut = new ObjectInputStream(socket.getInputStream());
         
         
+       // outPut.writeObject(TempNodes);
+        outPut.writeObject(newNodeId);
+        outPut.writeObject(NewNode);
         
+        //outPut.close();
         
         while (true) {
-        	ObjectOutputStream outPut = new ObjectOutputStream(socket.getOutputStream());
+        	
+        	System.out.println("here");
             String line = in.readLine();
+            System.out.println("now here");
             if (line.startsWith("NAME")) {
                 String id = getName();
                 frame.dispose();
                 ClientView view = new ClientView();
                 ClientController ctrl = new ClientController(id, this, view);
                 myController = ctrl;
+               // outPut.writeObject(myController.myNode);
                 while(myController.synched=true){
                 TempNodes.add(myController.myNode.tableStatus);
                 outPut.writeObject(TempNodes);
-                //System.out.print(myController.myNode.tableStatus);
                 }
+                System.out.println("Details sent to server...");
               
                 //I want to be able to send myController.myNode to the server at any time
                 ctrl.repaint();
@@ -84,10 +93,8 @@ public class NetworkClient {
                 textField.setEditable(true);
             } else if (line.startsWith("MESSAGE")) {
                 messageArea.append(line.substring(8) + "\n");
-            }
-            
+            }       
         }
-        
         
     }
 
