@@ -11,19 +11,23 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 
-public class LayoutController extends JPanel implements MouseListener, MouseMotionListener  {
+public class LayoutController extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
 	private LayoutView view;
 	boolean isHoldingNode;
 	boolean isPressingButton;
 	TableNode nodeGrabbed;
 	ArrayList<TableNode> nodes = new ArrayList<TableNode>();
+	ArrayList<TableNode> clientNodes = new ArrayList<TableNode>();
 	ArrayList<String> openIds = new ArrayList<String>();
 	int currentId;
 	boolean isSelecting;
 	boolean canMakeNode;
 	boolean canStillAddToNodes;
-	//NetworkServer network;
+	NetworkServer network;
 	BufferedImage layout;
+	ArrayList<ClientController> myClients;
+	
+	NetworkServer myNetwork;
 	public LayoutController() throws IOException, InterruptedException {
 		//network = ntwk;
 		view = new LayoutView(this);
@@ -35,10 +39,22 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 		canStillAddToNodes = false;
 		view.frame.addMouseListener(this);
 		view.frame.addMouseMotionListener(this);
+		view.frame.addKeyListener(this);
 		layout = ImageIO.read(new File("floorplan.png")); //Placeholder floorplan pulled from http://evstudio.com/giovanni-italian-restaurant-floor-plans/
 		repaint();
 	}
 	
+	public void updateNode(TableNode node) {
+		for (int i = 0; i < nodes.size(); i++) {
+			if (nodes.get(i).nodeID.equals(node.nodeID)) {
+				nodes.get(i).tableStatus = node.tableStatus;
+				nodes.get(i).genNotif = node.genNotif;
+				nodes.get(i).myOrder = node.myOrder;
+				nodes.get(i).updateNodeImage();
+				repaint();
+			}
+		}
+	}
 	private boolean isNodeInServer(String id) {
 		String node = null;
 		//node = network.findNode(id);
@@ -59,9 +75,31 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 						repaint();
 						canMakeNode = true;
 					}
+					if (isOverAdvance(e.getX(), e.getY(), nodes.get(i))) {
+						nodes.get(i).advanceStatus();
+						for (int j = 0; j < clientNodes.size(); j++) {
+							if (clientNodes.get(j).nodeID.equals(nodes.get(i).nodeID)) {
+								clientNodes.get(j).advanceStatus();
+							}
+						}
+					}
 				}
 			}
 		}
+	}
+	public boolean isOverAdvance(int x, int y, TableNode node) {
+		if (node.isSelected) {
+			int leftX = node.x+node.buttonX;
+			int rightX = leftX+node.advanceIcon.getWidth();
+			int topY = node.y+node.buttonY+node.orderButton.getHeight()+16;
+			int botY = topY+node.advanceIcon.getHeight();
+			if (x > leftX && x < rightX) {
+				if (y > topY+32 && y < botY+32) {
+					return true;
+				}
+			}			
+		}
+		return false;
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
@@ -121,6 +159,7 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 						nodes.add(new TableNode(idString, e.getX(), e.getY(), view));
 						nodes.get(nodes.size()-1).x = nodes.get(nodes.size()-1).x-nodes.get(nodes.size()-1).nodeIcon.getWidth()/2+nodes.get(nodes.size()-1).xOffset;
 						nodes.get(nodes.size()-1).y = nodes.get(nodes.size()-1).y-nodes.get(nodes.size()-1).nodeIcon.getHeight()/2+nodes.get(nodes.size()-1).yOffset;
+						//myNetwork.allNodes.add(nodes.get(nodes.size()-1));
 						canStillAddToNodes = false;
 						repaint();
 					}
@@ -129,19 +168,20 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 			}
 			if (isOverNode(e.getX(), e.getY()) && !isOverDialogBox(e.getX(), e.getY())) {
 				//The mouse is hovering over a node at this point
-				if (!nodeOver(e.getX(), e.getY()).synched) {
+
 					isHoldingNode = true;
 					nodeGrabbed = nodeOver(e.getX(), e.getY());
 					nodeGrabbed.x = e.getX()-nodeGrabbed.nodeIcon.getWidth()/2+nodeGrabbed.xOffset;
 					nodeGrabbed.y = e.getY()-nodeGrabbed.nodeIcon.getWidth()/2+nodeGrabbed.yOffset;
 					try {
-						nodeGrabbed.nodeIcon = ImageIO.read(new File("node0_2.png"));
+						if (nodeGrabbed.tableStatus == 0) {
+							nodeGrabbed.nodeIcon = ImageIO.read(new File("node0_2.png"));
+						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					repaint();
-				}
 			}
 			for (int i = 0; i < nodes.size(); i++) {
 				if (nodes.get(i).isSelected) {
@@ -150,8 +190,6 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 						if (nodes.get(i).synched) {
 							try {
 								nodes.get(i).orderButton = ImageIO.read(new File ("orderButton2.png"));
-								orderController control = new orderController();
-								new LayoutView(control);
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -175,6 +213,12 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 			if (canSelect) {
 				if (isOverNode(e.getX(), e.getY())) {
 					nodeOver(e.getX(), e.getY()).isSelected = true;
+					nodeOver(e.getX(), e.getY()).genNotif = 0;
+					for (int i = 0; i < clientNodes.size(); i++) {
+						if (clientNodes.get(i).nodeID.equals(nodeOver(e.getX(), e.getY()).nodeID)) {
+							clientNodes.get(i).genNotif = 0;
+						}
+					}
 					canMakeNode = false;
 					repaint();
 				}
@@ -185,11 +229,12 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 			if (isPressingButton) {
 				for (int i = 0; i < nodes.size(); i++) {
 					if (nodes.get(i).isSelected) {
-						nodes.get(i).synched = true;
 						if (nodes.get(i).synched) {
 							try {
 								nodes.get(i).orderButton = ImageIO.read(new File ("orderButton.png"));
 							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
 							}
 						}
 					}
@@ -201,7 +246,9 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 			if (isHoldingNode && !isOverDialogBox(e.getX(), e.getY())){
 				if (nodeGrabbed != null) {
 					try {
-						nodeGrabbed.nodeIcon = ImageIO.read(new File("node0_1.png"));
+						if (nodeGrabbed.tableStatus == 0) {
+							nodeGrabbed.nodeIcon = ImageIO.read(new File("node0_1.png"));
+						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -300,6 +347,9 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 		g.drawImage(layout, 0, 0, null);
 		for (int i = 0; i < nodes.size(); i++) {
 			g.drawImage(nodes.get(i).nodeIcon, nodes.get(i).x, nodes.get(i).y, null);
+			if (nodes.get(i).genNotif > 0) {
+				g.drawImage(nodes.get(i).notifIcon, nodes.get(i).x, nodes.get(i).y,null);
+			}
 		}
 		for (int i = 0; i < nodes.size(); i++) {
 			if (nodes.get(i).isSelected) {
@@ -317,6 +367,7 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 				}
 				else {
 					g.drawImage(nodes.get(i).orderButton, nodes.get(i).x+nodes.get(i).buttonX, nodes.get(i).y+nodes.get(i).buttonY, null);
+					g.drawImage(nodes.get(i).advanceIcon, nodes.get(i).x+nodes.get(i).buttonX, nodes.get(i).y+nodes.get(i).buttonY+nodes.get(i).orderButton.getHeight()+16, null);
 				}
 			}
 		}
@@ -351,6 +402,40 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		NetworkClient client = null;
+		try {
+			client = new NetworkClient();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client.run();
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.myController.myLayout = this;
+		clientNodes.add(client.myController.myNode);
+		client.myController.repaint();
+		client.myController.checkSync();
 		
 	}
 }

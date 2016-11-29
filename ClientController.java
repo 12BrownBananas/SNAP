@@ -45,8 +45,10 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
     Ellipse2D mainButtonBounds;
     Ellipse2D notifButtonBounds;
     Ellipse2D orderButtonBounds;
+    
+    LayoutController myLayout;
  
-    public ClientController(String id, NetworkClient ntwk, ClientView view) throws IOException, InterruptedException {
+    public ClientController(String id, ClientView view) throws IOException, InterruptedException {
     	mainButtonPressed = false;
     	notifButtonPressed = false;
     	overNotifButton = false;
@@ -54,13 +56,13 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
     	overOrderButton = false;
     	yOffset = 32;
     	hasView = false;
-    	synched=true;
+    	synched=false;
     	myView = view;
     	overMainButton = false;
     	myView.frame.setContentPane(this);
     	this.id = id;
     	myNode = new TableNode(id, this);
-    	myNetwork = ntwk;
+    	//myNetwork = ntwk;
     	xOffset = 128;
         try {
 			snapButton = ImageIO.read(new File("snapbutton_unsynched.png"));
@@ -77,7 +79,34 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
         notifButtonBounds = new Ellipse2D.Double(myView.width-notifButton.getWidth()-xOffset, myView.height/20+yOffset, notifButton.getWidth(), notifButton.getHeight());
         orderButtonBounds = new Ellipse2D.Double(myView.width-orderButton.getWidth()-xOffset, myView.height/2, orderButton.getWidth(), orderButton.getHeight());
     }
-    
+    public void updateNode(TableNode node) {
+    	if (node.nodeID == myNode.nodeID) {
+    		myNode.tableStatus = node.tableStatus;
+    		myNode.genNotif = node.genNotif;
+    		myNode.myOrder = node.myOrder;
+    	}
+    }
+    public void checkSync() {
+    	if (!synched) {
+	    	for (int i = 0; i < myLayout.nodes.size(); i++) {
+	    		System.out.println(myLayout.nodes.get(i).nodeID);
+	    		System.out.println(myNode.nodeID);
+		    	if (myLayout.nodes.get(i).nodeID.equals(myNode.nodeID)) {
+		    		synched = true;
+		    		myLayout.nodes.get(i).synched = true;
+		            try {
+		    			snapButton = ImageIO.read(new File("snapbutton.png"));
+		    			notifButton = ImageIO.read(new File("client_notifButton.png"));
+		    			orderButton = ImageIO.read(new File("client_orderButton.png"));
+		    			repaint();
+		    		} catch (IOException e) {
+		    			// TODO Auto-generated catch block
+		    			e.printStackTrace();
+		    		}
+		    	}
+	    	}
+    	}
+    }
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		int status = myNode.tableStatus;
@@ -256,6 +285,7 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
 				}
 				myNode.advanceStatus();
 				System.out.println("New node status: "+myNode.tableStatus);
+				myLayout.updateNode(myNode);
 				repaint();
 				myView.repaint();
 			}
@@ -268,6 +298,7 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
 					e.printStackTrace();
 				}
 				myNode.genNotif++;
+				myLayout.updateNode(myNode);
 				repaint();
 				myView.repaint();
 			}
@@ -279,6 +310,7 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				myLayout.updateNode(myNode);
 				repaint();
 				myView.repaint();
 			}

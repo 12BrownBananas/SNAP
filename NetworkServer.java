@@ -1,4 +1,7 @@
-import java.awt.List;
+import java.awt.Button;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,13 +11,13 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
@@ -22,11 +25,11 @@ import javax.swing.JTextArea;
  */
 
 public class NetworkServer {
-	 private static ArrayList<Integer>  TempNodes;
 		
 	private JFrame frame = new JFrame("SNAPServer");
    	static JTextArea area = new JTextArea(10, 30);
 	private JMenuBar MenuBar = new JMenuBar();
+	ArrayList<String> writerID = new ArrayList<String>();
 	JMenu Menu = new JMenu ("Menu");
 	JMenuItem exit = new JMenuItem("Exit");
 	//I want a local variable that I can use to store nodes inside of, e.g. TableNode tempNode = new TableNode(...)
@@ -37,7 +40,6 @@ public class NetworkServer {
      * this has keeps track of the table ID no and make sure that 
      * there are not other tables with the same ID No
      */
-   // private static ArrayList<Integer> TempId= new ArrayList<Integer>();
     private ArrayList<TableNode> IdNode = new ArrayList<TableNode>();
     private static HashSet<String> IdNodeLookup = new HashSet<String>();
 
@@ -80,46 +82,37 @@ public class NetworkServer {
         private Socket socket;
         private BufferedReader in;
         private PrintWriter out;
-		private ObjectInputStream objectIn;
-		private ObjectOutputStream outPut;
-		private ObjectInputStream inPut;
-		private ArrayList<Integer> TempId;
+        private ObjectInputStream objectIn;
+        private ObjectOutputStream objectOut;
 
         public Handler(Socket socket) {
             this.socket = socket;
         }
-       
-        @SuppressWarnings("unchecked")
-		public void run() {
+        public TableNode deserialize(Socket socket) throws ClassNotFoundException {
+        	TableNode table = null;
+        	try {
+				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+				table = (TableNode) in.readObject();
+				in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	return table;
+        }
+        public void run() {
             try {
-           
-            	ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            	TempId =  new ArrayList<Integer>();;
-				try {
-					TempId = (ArrayList<Integer>) ois.readObject();
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-                System.out.println("Message Received from client: " + TempId.toString());
-            
-                printArray(TempId);   
-                acceptData(ois);
-                //ois.close();
-                //socket.close();
-                //System.out.println("Waiting for client message is...");
                 in = new BufferedReader(new InputStreamReader(
                     socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
                 
-
-
+                objectIn = new ObjectInputStream(socket.getInputStream());
+                objectOut = new ObjectOutputStream(socket.getOutputStream());
                 // Request a name from this client.  Keep requesting until
                 // a name is submitted that is not already used.  Note that
                 // checking for the existence of a name and adding the name
                 // must be done while locking the set of names.
                 while (true) {
-                	
                     out.println("NAME");
                     name = in.readLine();
                     if (name == null) {
@@ -135,7 +128,6 @@ public class NetworkServer {
                         }
                     }
                 }
-               
                 area.append("The Table IdNode " + name + " is Connected" +"\n");
 
                 // Now that a successful name has been chosen, add the
@@ -143,6 +135,7 @@ public class NetworkServer {
                 // this client can receive broadcast messages.
                 out.println("ACCEPTED");
                 writers.add(out);
+                
 
                 // Accept messages from this client and broadcast them.
                 // Ignore other clients that cannot be broadcasted to.
@@ -171,29 +164,5 @@ public class NetworkServer {
                 }
             }
         }
-
-		private void printArray(ArrayList<Integer> tempId2) {
-			// TODO Auto-generated method stub
-			for(Integer s:tempId2){
-		          System.out.println("anything"+ s);
-		        }
-		}
-		
-		private void acceptData(ObjectInputStream inPut) {
-			// TODO Auto-generated method stub
-			System.out.println("acceptData called by " + Thread.currentThread().getName());
-		    Integer s = 0;
-			try {
-				s = (Integer) inPut.readObject();
-			} catch (ClassNotFoundException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		    TempId.add(s);
-		    System.out.println("Data coming in: " + TempId.toString());
-		}
-		
-		
     }
-   
-	
+}

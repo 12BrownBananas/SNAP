@@ -1,4 +1,12 @@
+//"When prompted  for the IP adress enter "localhost". this is for testing only
+// and enter a table name or ID
 import java.awt.Button;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,8 +16,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -17,18 +29,29 @@ public class NetworkClient {
 
     BufferedReader in;
     PrintWriter out;
-    TableNode NewNode;
     JFrame frame = new JFrame("SNAPClient");
     JTextField textField = new JTextField(40);
     JTextArea messageArea = new JTextArea(8, 40);
 	Button ServiceButton= new Button("Touch Me for Service");
 	ClientController myController;
-	ArrayList <Integer> TempNodes = new ArrayList<Integer>();
-	ArrayList<TableNode> newNodeId= new ArrayList<TableNode>();
-	private ObjectOutputStream outPut;
-	private ObjectInputStream inPut;
+	
+	ArrayList<TableNode> allNodes;
+	
+	ObjectInputStream objectIn;
+	ObjectOutputStream objectOut;
 	
     public NetworkClient() throws IOException {
+    }
+
+    /**
+     * Prompt for and return the address of the server.
+     */
+    private String getServerAddress() {
+        return JOptionPane.showInputDialog(
+            frame,
+            "Enter IP Address of the Server:",
+            "",
+            JOptionPane.QUESTION_MESSAGE);
     }
 
     /**
@@ -46,55 +69,25 @@ public class NetworkClient {
      * Connects to the server then enters the processing loop.
      * @throws InterruptedException 
      */
-    private void run() throws IOException, InterruptedException {
-    	//TempNodes.add(myController.myNode.tableStatus);
-    	newNodeId.add(ClientController.myNode);
+    public void run() throws IOException, InterruptedException {
 
         // Make connection and initialize streams
-        String serverAddress = "localhost";
-        @SuppressWarnings("resource")
-		Socket socket = new Socket(serverAddress, 9003);
-        in = new BufferedReader(new InputStreamReader(
-            socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream(), true);
+        String serverAddress = getServerAddress();
+        //@SuppressWarnings("resource")
+		//Socket socket = new Socket(serverAddress, 9003);
+        //in = new BufferedReader(new InputStreamReader();
+        //out = new PrintWriter(socket.getOutputStream(), true);
         // Process all messages from server
+
+        String id = getName();
+        frame.dispose();
+        ClientView view = new ClientView();
+        ClientController ctrl = new ClientController(id, view);
+        myController = ctrl;
+        //I want to be able to send myController.myNode to the server at any time
+        ctrl.repaint();
         
-       outPut = new ObjectOutputStream(socket.getOutputStream());
-       // inPut = new ObjectInputStream(socket.getInputStream());
         
-        
-       // outPut.writeObject(TempNodes);
-        outPut.writeObject(newNodeId);
-        outPut.writeObject(NewNode);
-        
-        //outPut.close();
-        
-        while (true) {
-        	
-        	System.out.println("here");
-            String line = in.readLine();
-            System.out.println("now here");
-            if (line.startsWith("NAME")) {
-                String id = getName();
-                frame.dispose();
-                ClientView view = new ClientView();
-                ClientController ctrl = new ClientController(id, this, view);
-                myController = ctrl;
-               // outPut.writeObject(myController.myNode);
-                while(myController.synched=true){
-                TempNodes.add(myController.myNode.tableStatus);
-                outPut.writeObject(TempNodes);
-                }
-                System.out.println("Details sent to server...");
-              
-                //I want to be able to send myController.myNode to the server at any time
-                ctrl.repaint();
-            } else if (line.startsWith("ACCEPTED")) {
-                textField.setEditable(true);
-            } else if (line.startsWith("MESSAGE")) {
-                messageArea.append(line.substring(8) + "\n");
-            }       
-        }
         
     }
 

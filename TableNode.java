@@ -1,14 +1,16 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class TableNode  {
+public class TableNode implements Serializable {
 	Order myOrder;
 	String nodeID;
 	int tableStatus;
@@ -29,6 +31,8 @@ public class TableNode  {
 	BufferedImage button;
 	BufferedImage button2;
 	BufferedImage orderButton;
+	BufferedImage notifIcon;
+	BufferedImage advanceIcon;
 	int buttonX;
 	int buttonY;
 	int dialogBoxX;
@@ -39,10 +43,13 @@ public class TableNode  {
 	boolean synched;
 	LayoutView view;
 	ClientController ctrl;
+	
+	Ellipse2D advanceButtonMask;
 	TableNode(String uniqueID, ClientController myController) {
 		ctrl = myController;
 		isClientSide = true;
 		tableStatus = 0;
+		nodeID = uniqueID;
 		statusNames = new String[6];
 		statusNames[0] = "Idle";
 		statusNames[1] = "Ready to Order";
@@ -64,9 +71,10 @@ public class TableNode  {
 		xOffset = -6;
 		yOffset = -22;
 		selectYOffset = 32;
-		synched = false;
+		synched = true;
 		genNotif = 0;
 		refillNotif = 0;
+
 		try {
 			nodeIcon = ImageIO.read(new File("node0_1.png"));
 			dialogBox = ImageIO.read(new File("nodeDialogBox.png"));
@@ -74,6 +82,8 @@ public class TableNode  {
 			button = ImageIO.read(new File("button0.png"));
 			button2 = ImageIO.read(new File("button1.png"));
 			orderButton = ImageIO.read(new File ("orderButton.png"));
+			notifIcon = ImageIO.read(new File("notificon.png"));
+			advanceIcon = ImageIO.read(new File("serversnapbutton.png"));
 		}
 		catch (IOException e) {
 		}
@@ -83,6 +93,7 @@ public class TableNode  {
 		trashY = dialogBoxY+dialogBox.getHeight()+yOffset*5;
 		buttonX = dialogBoxX+dialogBox.getWidth()/5;
 		buttonY = dialogBoxY-yOffset;
+		//advanceButtonMask = new Ellipse2D.Double(x+buttonX, y+buttonY+orderButton.getHeight()+16, advanceIcon.getWidth(), advanceIcon.getHeight());
 	}
 	public void createOrder() {
 		myOrder = new Order();
@@ -102,25 +113,25 @@ public class TableNode  {
 			view.myController.repaint();
 		}
 	}
-	private void updateNodeImage() {
+	public void updateNodeImage() {
 		File imgFile = null;
 		if (tableStatus == 0) {
-			imgFile = new File("node0_1.png");
-		}
-		if (tableStatus == 1) {
 			imgFile = new File("node1_1.png");
 		}
-		if (tableStatus == 2) {
+		if (tableStatus == 1) {
 			imgFile = new File("node2_1.png");
 		}
-		if (tableStatus == 3) {
+		if (tableStatus == 2) {
 			imgFile = new File("node3_1.png");
 		}
-		if (tableStatus == 4) {
+		if (tableStatus == 3) {
 			imgFile = new File("node4_1.png");
 		}
-		if (tableStatus == 5) {
+		if (tableStatus == 4) {
 			imgFile = new File("node5_1.png");
+		}
+		if (tableStatus == 5) {
+			imgFile = new File("node6_1.png");
 		}
 		if (tableStatus == 6) {
 			imgFile = new File("node6_1.png");
