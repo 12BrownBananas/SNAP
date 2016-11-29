@@ -49,7 +49,7 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 			if (nodes.get(i).nodeID.equals(node.nodeID)) {
 				nodes.get(i).tableStatus = node.tableStatus;
 				nodes.get(i).genNotif = node.genNotif;
-				nodes.get(i).myOrder = node.myOrder;
+				nodes.get(i).tableOrder = node.tableOrder;
 				nodes.get(i).updateNodeImage();
 				repaint();
 			}
@@ -156,7 +156,12 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 						canStillAddToNodes = true;
 					}
 					if (currentId <= 9999 || canStillAddToNodes) {
-						nodes.add(new TableNode(idString, e.getX(), e.getY(), view));
+						try {
+							nodes.add(new TableNode(idString, e.getX(), e.getY(), view));
+						} catch (NumberFormatException | IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						nodes.get(nodes.size()-1).x = nodes.get(nodes.size()-1).x-nodes.get(nodes.size()-1).nodeIcon.getWidth()/2+nodes.get(nodes.size()-1).xOffset;
 						nodes.get(nodes.size()-1).y = nodes.get(nodes.size()-1).y-nodes.get(nodes.size()-1).nodeIcon.getHeight()/2+nodes.get(nodes.size()-1).yOffset;
 						//myNetwork.allNodes.add(nodes.get(nodes.size()-1));
@@ -187,9 +192,11 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 				if (nodes.get(i).isSelected) {
 					if (isOverButton(e.getX(), e.getY(), nodes.get(i))) {
 						isPressingButton = true;
+						nodes.get(i).synched = true;
 						if (nodes.get(i).synched) {
 							try {
 								nodes.get(i).orderButton = ImageIO.read(new File ("orderButton2.png"));
+								new LayoutView(nodes.get(i).control);
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();

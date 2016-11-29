@@ -83,7 +83,7 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
     	if (node.nodeID == myNode.nodeID) {
     		myNode.tableStatus = node.tableStatus;
     		myNode.genNotif = node.genNotif;
-    		myNode.myOrder = node.myOrder;
+    		myNode.tableOrder = node.tableOrder;
     	}
     }
     public void checkSync() {

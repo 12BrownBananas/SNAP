@@ -27,13 +27,14 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 	
 	orderMenu menuArray;
 	tableOrder test;
+	
 	int yoT = 50;
 	int xoT = 30;
 	
 	int xOffset = 0;
 	int yOffset = 0;
 	
-	public orderController()throws NumberFormatException, IOException{
+	public orderController(tableOrder test)throws NumberFormatException, IOException{
 		
 		
 		int offsetFuncY= 0; //170
@@ -51,8 +52,8 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 		String[] iconsP = {"addButtonPressed.png","deleteButtonPressed.png",
 				"revertButtonPressed.png","backButtonPressed.png","forwardButtonPressed.png"};
 		
-		menuArray = new orderMenu();
-		test = new tableOrder(80085);
+		this.menuArray = new orderMenu();
+		this.test = test;
 		
 		for(menuItem item: menuArray.currentList){
 			rectangles.add(item.rect);

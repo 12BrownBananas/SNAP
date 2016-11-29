@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class TableNode implements Serializable {
-	Order myOrder;
+	tableOrder thisOrder;
 	String nodeID;
 	int tableStatus;
 	String[] statusNames;
@@ -43,6 +43,8 @@ public class TableNode implements Serializable {
 	boolean synched;
 	LayoutView view;
 	ClientController ctrl;
+	orderController control;
+	tableOrder tableOrder;
 	
 	Ellipse2D advanceButtonMask;
 	TableNode(String uniqueID, ClientController myController) {
@@ -58,7 +60,7 @@ public class TableNode implements Serializable {
 		statusNames[4] = "Order Delivered";
 		statusNames[5] = "Ready to Pay";
 	}
-	TableNode(String uniqueID, int xPos, int yPos, LayoutView myView) {
+	TableNode(String uniqueID, int xPos, int yPos, LayoutView myView) throws NumberFormatException, IOException {
 		view = myView;
 		nodeID = uniqueID;
 		tableStatus = 0;
@@ -71,10 +73,12 @@ public class TableNode implements Serializable {
 		xOffset = -6;
 		yOffset = -22;
 		selectYOffset = 32;
-		synched = true;
+		synched = false;
 		genNotif = 0;
 		refillNotif = 0;
-
+		createOrder();
+		this.control = new orderController(new tableOrder(nodeID));
+		
 		try {
 			nodeIcon = ImageIO.read(new File("node0_1.png"));
 			dialogBox = ImageIO.read(new File("nodeDialogBox.png"));
@@ -96,10 +100,10 @@ public class TableNode implements Serializable {
 		//advanceButtonMask = new Ellipse2D.Double(x+buttonX, y+buttonY+orderButton.getHeight()+16, advanceIcon.getWidth(), advanceIcon.getHeight());
 	}
 	public void createOrder() {
-		myOrder = new Order();
+		thisOrder = new tableOrder(nodeID);
 	}
 	public void removeOrder() {
-		myOrder = null;
+		thisOrder = null;
 	}
 	public void advanceStatus() {
 		if (tableStatus < 5) {
@@ -152,7 +156,7 @@ public class TableNode implements Serializable {
 	}
 	public void resetStatus() {
 		tableStatus = 0;
-		myOrder = null;
+		tableOrder = null;
 		updateNodeImage();
 		view.myController.repaint();
 	}

@@ -7,8 +7,8 @@ import java.util.Scanner;
 public class orderMenu {
 	
 	public ArrayList<menuItem> menu;
-	int screenX = orderViewer.width/2;
-	int screenY = orderViewer.height/5;
+	int screenX = LayoutView.width/2;
+	int screenY = LayoutView.height/5;
 	int screenXoffset = 0; //280
 	int screenYoffset = 0; //100
 	int count = 1;

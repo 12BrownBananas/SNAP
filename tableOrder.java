@@ -2,12 +2,12 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class tableOrder {
-	int id; 
+	String id; 
 	ArrayList<menuItem> tableOrder;
 	Rectangle rect;
 	int x, y;
 	
-	public tableOrder(int id){
+	public tableOrder(String id){
 		this.id = id;
 		this.tableOrder = new ArrayList<>();
 		this.x = 30;
@@ -15,7 +15,7 @@ public class tableOrder {
 		
 	}
 	
-	public ArrayList<menuItem> getOrder(int id){
+	public ArrayList<menuItem> getOrder(String id){
 		if(id == this.id){
 			return this.tableOrder;
 		}
