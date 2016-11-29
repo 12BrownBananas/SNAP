@@ -17,6 +17,7 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 	boolean isPressingButton;
 	TableNode nodeGrabbed;
 	ArrayList<TableNode> nodes = new ArrayList<TableNode>();
+	ArrayList<TableNode> clientNodes = new ArrayList<TableNode>();
 	ArrayList<String> openIds = new ArrayList<String>();
 	int currentId;
 	boolean isSelecting;
@@ -24,6 +25,8 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 	boolean canStillAddToNodes;
 	NetworkServer network;
 	BufferedImage layout;
+	
+	NetworkServer myNetwork;
 	public LayoutController() throws IOException, InterruptedException {
 		//network = ntwk;
 		view = new LayoutView(this);
@@ -39,6 +42,9 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 		repaint();
 	}
 	
+	public void updateNode(TableNode node) {
+		//for (int i = 0; i < )
+	}
 	private boolean isNodeInServer(String id) {
 		String node = null;
 		//node = network.findNode(id);
@@ -121,6 +127,7 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 						nodes.add(new TableNode(idString, e.getX(), e.getY(), view));
 						nodes.get(nodes.size()-1).x = nodes.get(nodes.size()-1).x-nodes.get(nodes.size()-1).nodeIcon.getWidth()/2+nodes.get(nodes.size()-1).xOffset;
 						nodes.get(nodes.size()-1).y = nodes.get(nodes.size()-1).y-nodes.get(nodes.size()-1).nodeIcon.getHeight()/2+nodes.get(nodes.size()-1).yOffset;
+						//myNetwork.allNodes.add(nodes.get(nodes.size()-1));
 						canStillAddToNodes = false;
 						repaint();
 					}
