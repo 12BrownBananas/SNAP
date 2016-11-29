@@ -16,12 +16,15 @@ import javax.swing.*;
 
 public class orderController extends JPanel implements MouseListener, MouseMotionListener{
 
-	
+	private LayoutView view;
 	ArrayList<functionKey> functionList = new ArrayList<>();
 	ArrayList<Rectangle> rectangles = new ArrayList<>();
 	ArrayList<menuItem> orderListTemp = new ArrayList<>();
 	ArrayList<menuItem> orderList = new ArrayList<>();
 	ArrayList<menuItem> currentList = new ArrayList<>();
+	
+
+	
 	orderMenu menuArray;
 	tableOrder test;
 	int yoT = 50;
@@ -32,16 +35,15 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 	
 	public orderController()throws NumberFormatException, IOException{
 		
-
 		
 		int offsetFuncY= 0; //170
 		int offsetFuncX = 0; //170
 		
-		int xFunc = orderViewer.width - 150;
-		int yFunc = orderViewer.height/4;
+		int xFunc = LayoutView.width - 150;
+		int yFunc = LayoutView.height/4;
 		
-		int xFuncPage = orderViewer.width/2 + 140;
-		int yFuncPage = orderViewer.height - 140;
+		int xFuncPage = LayoutView.width/2 + 140;
+		int yFuncPage = LayoutView.height - 140;
 		
 		String[] icons = {"addButton.png","deleteButton.png","revertButton.png",
 				"backButton.png","forwardButton.png"};
@@ -118,7 +120,7 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 				}
 			}
 		}
-	if(x<1250 && x > orderViewer.width/2 && y<655){
+	if(x<1250 && x > LayoutView.width/2 && y<655){
 			for(menuItem item: menuArray.currentList){
 				if(item.rect.contains(x, y)){
 					if(item.currentButton == item.buttonP){
@@ -164,7 +166,7 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 								addItem.setX(xoT + xOffset);
 								addItem.setY(yoT + yOffset);
 								addItem.setRect(new Rectangle(addItem.x, addItem.y, 300, 40));
-								if(yOffset<orderViewer.height-150){
+								if(yOffset<LayoutView.height-150){
 									yOffset +=50;
 								}
 								else{
@@ -192,7 +194,7 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 									itemDelete.setX(xoT + xOffset);
 									itemDelete.setY(yoT + yOffset);
 									itemDelete.setRect(new Rectangle(itemDelete.x, itemDelete.y, 300, 40));
-									if(yOffset<orderViewer.height-150){
+									if(yOffset<LayoutView.height-150){
 										yOffset +=50;
 									}
 									else{
@@ -207,6 +209,7 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 						if(key.name == "revertButton.png"){
 							if(test.tableOrder.size()>0 && orderListTemp.isEmpty()){
 							test.tableOrder.remove(test.tableOrder.size()-1);
+							yOffset -=50;
 							}
 							else{}
 							orderListTemp.clear();
@@ -262,9 +265,9 @@ public class orderController extends JPanel implements MouseListener, MouseMotio
 		Font myFont2 = new Font("Tw Cen MT", Font.PLAIN, 20);
 		g.setFont(myFont);
 		
-		g.drawRect(5, 5, orderViewer.width/2 - 50, orderViewer.height -65);
+		g.drawRect(5, 5, LayoutView.width/2 - 50, LayoutView.height -65);
 		g.setColor(Color.pink);
-		g.fillRect(5, 5, orderViewer.width/2-50, orderViewer.height-65);
+		g.fillRect(5, 5, LayoutView.width/2-50, LayoutView.height-65);
 		g.setColor(Color.black);
 		
 		

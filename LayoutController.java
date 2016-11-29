@@ -17,16 +17,13 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 	boolean isPressingButton;
 	TableNode nodeGrabbed;
 	ArrayList<TableNode> nodes = new ArrayList<TableNode>();
-	ArrayList<TableNode> clientNodes = new ArrayList<TableNode>();
 	ArrayList<String> openIds = new ArrayList<String>();
 	int currentId;
 	boolean isSelecting;
 	boolean canMakeNode;
 	boolean canStillAddToNodes;
-	NetworkServer network;
+	//NetworkServer network;
 	BufferedImage layout;
-	
-	NetworkServer myNetwork;
 	public LayoutController() throws IOException, InterruptedException {
 		//network = ntwk;
 		view = new LayoutView(this);
@@ -42,9 +39,6 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 		repaint();
 	}
 	
-	public void updateNode(TableNode node) {
-		//for (int i = 0; i < )
-	}
 	private boolean isNodeInServer(String id) {
 		String node = null;
 		//node = network.findNode(id);
@@ -127,7 +121,6 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 						nodes.add(new TableNode(idString, e.getX(), e.getY(), view));
 						nodes.get(nodes.size()-1).x = nodes.get(nodes.size()-1).x-nodes.get(nodes.size()-1).nodeIcon.getWidth()/2+nodes.get(nodes.size()-1).xOffset;
 						nodes.get(nodes.size()-1).y = nodes.get(nodes.size()-1).y-nodes.get(nodes.size()-1).nodeIcon.getHeight()/2+nodes.get(nodes.size()-1).yOffset;
-						//myNetwork.allNodes.add(nodes.get(nodes.size()-1));
 						canStillAddToNodes = false;
 						repaint();
 					}
@@ -157,6 +150,8 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 						if (nodes.get(i).synched) {
 							try {
 								nodes.get(i).orderButton = ImageIO.read(new File ("orderButton2.png"));
+								orderController control = new orderController();
+								new LayoutView(control);
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -190,12 +185,11 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 			if (isPressingButton) {
 				for (int i = 0; i < nodes.size(); i++) {
 					if (nodes.get(i).isSelected) {
+						nodes.get(i).synched = true;
 						if (nodes.get(i).synched) {
 							try {
 								nodes.get(i).orderButton = ImageIO.read(new File ("orderButton.png"));
 							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
 							}
 						}
 					}
