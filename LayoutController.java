@@ -10,7 +10,15 @@ import java.awt.Graphics;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-
+/*
+* @Author Garrett Thompson
+* Created: November 17th
+* Last Edited: December 2nd
+* LayoutController.java
+* The controller object for the server version of SNAP. Works with the LayoutView and NetworkServer to store information
+* relating to the current state of table nodes in the layout.
+* Expected revisions: Ability to directly access menu database, ability to access a menu for settings adjustment
+*/
 public class LayoutController extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
 	private LayoutView view;
 	boolean isHoldingNode;
