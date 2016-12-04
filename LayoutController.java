@@ -11,7 +11,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 /*
-* @Author Garrett Thompson
+* @author Garrett Thompson, Jordan Abbatiello
 * Created: November 17th
 * Last Edited: December 2nd
 * LayoutController.java
@@ -165,7 +165,7 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 		
 	}
 	/*
-	* @author Garrett Thompson
+	* @author Garrett Thompson, Jordan Abbatiello
 	* Override of the mousePressed method in MouseListener. Used primarily for preparing to select
 	* GUI buttons (the actual selection doesn't occur until mouseReleased) and generating nodes on
 	* the layout. 
@@ -273,7 +273,7 @@ public class LayoutController extends JPanel implements MouseListener, MouseMoti
 		}
 	}
 	/*
-	* @author Garrett Thompson
+	* @author Garrett Thompson, Jordan Abbatiello
 	* An override of the MouseListener mouseReleased event which is used primarily for selecting
 	* buttons once they've been pressed, setting the position of nodes on the layout, and selecting and deselecting
 	* nodes.
