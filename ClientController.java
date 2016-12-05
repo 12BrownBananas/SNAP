@@ -15,7 +15,16 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import java.awt.*;
- 
+/*
+* @author Garrett Thompson
+* Created: November 16th
+* Last Edited: November 27th
+* ClientController.java
+* Controller object for the client-side interface. Handles things such as accepting user input
+* and sending notifications to the server.
+* Expected Revisions: Adding in displaying order functionality, different types of notifications.
+*/ 
+
 public class ClientController extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
 	protected JTextField textField;
     protected JTextArea textArea;
@@ -47,7 +56,12 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
     Ellipse2D orderButtonBounds;
     
     LayoutController myLayout;
- 
+    /* @author Garrett Thompson
+    * Constructor for the ClientController. Creates a new client controller after a new ID has been allocated
+    * to it by the NetworkClient. 
+    * @param id  The unique ID for this client's corresponding table node.
+    * @param view  The view which draws this client's GUI.
+    */
     public ClientController(String id, ClientView view) throws IOException, InterruptedException {
     	mainButtonPressed = false;
     	notifButtonPressed = false;
@@ -65,20 +79,28 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
     	//myNetwork = ntwk;
     	xOffset = 128;
         try {
-			snapButton = ImageIO.read(new File("snapbutton_unsynched.png"));
-			notifButton = ImageIO.read(new File("client_notifButton_unsynched.png"));
-			orderButton = ImageIO.read(new File("client_orderButton_unsynched.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		snapButton = ImageIO.read(new File("snapbutton_unsynched.png"));
+		notifButton = ImageIO.read(new File("client_notifButton_unsynched.png"));
+		orderButton = ImageIO.read(new File("client_orderButton_unsynched.png"));
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
         myView.frame.addMouseListener(this);
         myView.frame.addMouseMotionListener(this);
         hasView = true;
-        mainButtonBounds = new Ellipse2D.Double(myView.width/4-xOffset, myView.height/8+yOffset, snapButton.getWidth(), snapButton.getHeight());
-        notifButtonBounds = new Ellipse2D.Double(myView.width-notifButton.getWidth()-xOffset, myView.height/20+yOffset, notifButton.getWidth(), notifButton.getHeight());
-        orderButtonBounds = new Ellipse2D.Double(myView.width-orderButton.getWidth()-xOffset, myView.height/2, orderButton.getWidth(), orderButton.getHeight());
+	int widthDiv = 4;
+	int heightDiv = 8;
+	int heightDiv2 = 20;
+	int heightDiv3 = 2;
+	//The above values are used for bounding circle calculation on each GUI button.
+        mainButtonBounds = new Ellipse2D.Double(myView.width/widthDiv-xOffset, myView.height/heightDiv+yOffset, snapButton.getWidth(), snapButton.getHeight());
+        notifButtonBounds = new Ellipse2D.Double(myView.width-notifButton.getWidth()-xOffset, myView.height/heightDiv2+yOffset, notifButton.getWidth(), notifButton.getHeight());
+        orderButtonBounds = new Ellipse2D.Double(myView.width-orderButton.getWidth()-xOffset, myView.height/heightDiv3, orderButton.getWidth(), orderButton.getHeight());
     }
+    /* @author Garrett Thompson
+    * This method updates this client's corresponding table node based on the information supplied by some other node (passed as a parameter)
+    * @param node  The node to base the update on.
+    */
     public void updateNode(TableNode node) {
     	if (node.nodeID == myNode.nodeID) {
     		myNode.tableStatus = node.tableStatus;
@@ -86,6 +108,10 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
     		myNode.tableOrder = node.tableOrder;
     	}
     }
+    /* @author Garrett Thompson 
+    * Checks to see if this client's node has been synched with some corresponding server-side node.
+    * If not, finds a node to synchronize with. No corresponding node = no state change.
+    */
     public void checkSync() {
     	if (!synched) {
 	    	for (int i = 0; i < myLayout.nodes.size(); i++) {
@@ -107,6 +133,10 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
 	    	}
     	}
     }
+	/* @author Garrett Thompson
+	* Sets up the GUI to be drawn by the ClientView
+	* @param g  the graphics context to be used in drawing.
+	*/
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		int status = myNode.tableStatus;
@@ -149,19 +179,27 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
 		}
 	}
 	
-
+	/* 
+	* Arbitrary method stub required by Java in order to implement ActionListener
+	*/
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
-
+	/* 
+	* Arbitrary method stub required by Java in order to implement MouseMotionListener
+	*/
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 	
 		
 	}
-
+	/* @author Garrett Thompson
+	* Currently, this method is used to update the GUI when the user mouses over the SNAP button
+	* so that the state transition that occurs when clicking the SNAP button is telegraphed.
+	* @param arg0  The mouse event in question.
+	*/
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		if (mouseOverMainButton(arg0.getX(), arg0.getY())) {
@@ -190,42 +228,72 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
 			repaint();
 		}
 	}
-
+	/*
+	* Arbitrary method stub required by Java to implement MouseListener
+	*/
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	/*
+	* Arbitrary method stub required by Java to implement MouseListener
+	*/
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	/*
+	* Arbitrary method stub required by Java to implement MouseListener
+	*/
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	/* @author Garrett Thompson
+	* Checks to see if the mouse is hovering over the notification button, for example to check if the notification
+	* button can be clicked.
+	* @param x  The x coordinate of the mouse
+	* @param y  The y coordinate of the mouse
+	*/
 	public boolean mouseOverNotifButton(int x, int y) {
 		if (notifButtonBounds.contains(x, y)) {
 			return true;
 		}
 		return false;
 	}
+	/* @author Garrett Thompson
+	* Checks to see if the mouse is over the SNAP button, to see if it can be selected by a mouse click.
+	* @param x  The x coordinate of the mouse.
+	* @param y  The y coordinate of the mouse.
+	*/
 	public boolean mouseOverMainButton(int x, int y) {
 		if (mainButtonBounds.contains(x, y)) {
 			return true;
 		}
 		return false;
 	}
+	/* @author Garrett Thompson
+	* Checks to see if the mouse is over the order button, such that the order button is selectable.
+	* @param x  the X coordinate of the mouse.
+	* @param y  Y coordinate of the mouse
+	*/
 	public boolean mouseOverOrderButton(int x, int y) {
 		if (orderButtonBounds.contains(x, y)) {
 			return true;
 		}
 		return false;
 	}
+	/* @author Garrett Thompson
+	* The mouse pressed event. Used to select buttons, but will not activate their associated button events
+	* which don't occur until tripping a mouse released event with a button still selected.
+	* @param arg0  The mouse event itself
+	*/
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		if (synched) {
@@ -271,7 +339,10 @@ public class ClientController extends JPanel implements ActionListener, MouseLis
 		}
 		
 	}
-
+	/* @author Garrett Thompson
+	* This event triggers button events when said buttons have been selected, and does nothing otherwise.
+	* @param arg0  The mouse event itself.
+	*/
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		if (synched) {
