@@ -25,6 +25,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+/*
+* @author Spurgeon Bush
+* Created: October 28th
+* Last Edited: November 27th
+* NetworkClient.java
+* Networking component for client-side interface. Originally intended to serialize/deserialize objects
+* to be sent/recieved over the network, implementation complications have left these features unimplemented.
+* Expected revisions: Actual networking capability.
+*/
 public class NetworkClient {
 
     BufferedReader in;
@@ -43,7 +52,7 @@ public class NetworkClient {
     public NetworkClient() throws IOException {
     }
 
-    /**
+    /** @author Spurgeon Bush
      * Prompt for and return the address of the server.
      */
     private String getServerAddress() {
@@ -54,7 +63,7 @@ public class NetworkClient {
             JOptionPane.QUESTION_MESSAGE);
     }
 
-    /**
+    /** @author Spurgeon Bush
      * Prompt for and return the desired screen name.
      */
     private String getName() {
@@ -65,7 +74,7 @@ public class NetworkClient {
             JOptionPane.PLAIN_MESSAGE);
     }
 
-    /**
+    /** @author Spurgeon Bush
      * Connects to the server then enters the processing loop.
      * @throws InterruptedException 
      */
@@ -91,8 +100,8 @@ public class NetworkClient {
         
     }
 
-    /**
-     * main which Runs the client 
+    /** @author Spurgeon Bush
+     * main which Runs the client. Not actually used in current build. 
      */
     public static void main(String[] args) throws Exception {
         NetworkClient client = new NetworkClient();
