@@ -124,13 +124,13 @@ public class TableNode implements Serializable {
 		buttonY = dialogBoxY-yOffset;
 		//advanceButtonMask = new Ellipse2D.Double(x+buttonX, y+buttonY+orderButton.getHeight()+16, advanceIcon.getWidth(), advanceIcon.getHeight());
 	}
-	/* @author Garrett Thompson
+	/* @author Garrett Thompson, Jordan Abbatiello
 	* Generates a new empty order to be stored in the table node. 
 	*/
 	public void createOrder() {
 		thisOrder = new tableOrder(nodeID);
 	}
-	/* @author Garrett Thompson
+	/* @author Garrett Thompson, Jordan Abbatiello
 	* Removes the order currently stored in the node
 	*/
 	public void removeOrder() {
