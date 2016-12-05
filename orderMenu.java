@@ -4,6 +4,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * @author Jordan Abbatiello
+ * Created: November 13th
+ * Last modified: November 23rd
+ * orderMenu.java
+ * The class in charge of creating the order menu and scanning in the CSV files provided by the restaurant
+ * Expected Revisions: Negligible
+ *
+ */
 public class orderMenu {
 	
 	public ArrayList<menuItem> menu;
@@ -18,6 +27,12 @@ public class orderMenu {
 	
 	ArrayList<menuItem> currentList =new ArrayList<>();
 
+	/**@author Jordan Abbatiello
+	 * Constructor for the order menu. Reads in files and generates the current working list based on the 
+	 * first ten items in the menu. 
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
 	public orderMenu() throws NumberFormatException, IOException{
 		
 		this.menu = new ArrayList<>();
@@ -37,6 +52,10 @@ public class orderMenu {
 		this.currentList = generateCurrent();
 	}
 	
+	/**@author Jordan Abbatiello
+	 * Generates the current working list
+	 * @return current working list
+	 */
 	public ArrayList<menuItem> generateCurrent(){
 		for(int index = startIndex; index<endIndex; index++){
 			currentList.add(menu.get(index));
@@ -54,6 +73,11 @@ public class orderMenu {
 		return currentList;
 	}
 	
+	/** @author Jordan Abbatiello
+	 * Increments the page and provides new working list.
+	 * Called when the forward button is pressed.
+	 * 
+	 */
 	public void increment(){
 		this.startIndex +=10;
 		this.endIndex +=10;
@@ -66,6 +90,11 @@ public class orderMenu {
 		}
 	}
 	
+	/** @author Jordan Abbatiello
+	 * Decrements the page and provides a new working list.
+	 * Called when the back button is pressed.
+	 * 
+	 */
 	public void decrement(){
 		this.startIndex -= 10;
 		this.endIndex -= 10;
@@ -76,6 +105,10 @@ public class orderMenu {
 		
 	}
 	
+	/**@author Jordan Abbatiello
+	 * Resets the positions of the offsetting variables.
+	 * 
+	 */
 	public void resetPosition(){
 		this.screenXoffset = 0; //280
 		this.screenYoffset = 0; //100
