@@ -19,10 +19,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-/**
- *as in now there is communication  between client using the server as a router
- */
+/*
+* @author Spurgeon Bush
+* Created: October 28th
+* Last Edited: November 27th
+* NetworkServer.java
+* Networking object for server side. Initially intended to recieve table node objects from all synchronized
+* client-side nodes, this functionality was never successfully added.
+* Expected Revisions: Actual networking capability.
+*/ 
 
 public class NetworkServer {
 		
@@ -36,20 +41,20 @@ public class NetworkServer {
    
     private static final int PORT = 9003;
 
-    /**
+    /** 
      * this has keeps track of the table ID no and make sure that 
      * there are not other tables with the same ID No
      */
     private ArrayList<TableNode> IdNode = new ArrayList<TableNode>();
     private static HashSet<String> IdNodeLookup = new HashSet<String>();
 
-    /**
+    /** 
      * The set of all the print writers for all the clients.  This
      * set is kept so we can easily broadcast messages.
      */
     private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
 
-    /**
+    /** @author Spurgeon Bush
      * CREATES the window frame and menu for the server
      */
     public NetworkServer() throws IOException {
@@ -73,10 +78,14 @@ public class NetworkServer {
 
     
 
-    /**
-     * handler thread class. responsible for a dealing with a single client
-     * and broadcasting its messages.
-     */
+/*
+* @author Spurgeon Bush, Garrett Thompson
+* Created: October 28th
+* Last Edited: December 2nd
+* NetworkServer.java
+* Handler sub-object. Gets information from socket. In theory.  
+* Expected Revisions: Actual networking capability.
+*/ 
     public static class Handler extends Thread {
         private String name;
         private Socket socket;
@@ -84,10 +93,16 @@ public class NetworkServer {
         private PrintWriter out;
         private ObjectInputStream objectIn;
         private ObjectOutputStream objectOut;
-
+	/* @author Spurgeon Bush
+	* Constructor method. Creates a new handler from a given socket.
+	* @param socket  the socket in question
+	*/
         public Handler(Socket socket) {
             this.socket = socket;
         }
+	/* @author Spurgeon Bush, Garrett Thompson
+	* Attempts to deserialize a table node object recieved from the socket.
+	*/
         public TableNode deserialize(Socket socket) throws ClassNotFoundException {
         	TableNode table = null;
         	try {
@@ -100,6 +115,9 @@ public class NetworkServer {
 			}
         	return table;
         }
+	/* @author Spurgeon Bush, Garrett Thompson
+	* Since the server is always on, this is a perpetual input stream of data.
+	*/
         public void run() {
             try {
                 in = new BufferedReader(new InputStreamReader(
